@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}Міста{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Міста</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <a href="{{ url_for('add_city') }}" class="btn btn-sm btn-primary">
+            <i class="bi bi-plus-circle"></i> Додати місто
+        </a>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Назва</th>
+                        <th>Опис</th>
+                        <th>Дії</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for city in cities %}
+                    <tr>
+                        <td>{{ city.id }}</td>
+                        <td>{{ city.name }}</td>
+                        <td>{{ city.description }}</td>
+                        <td>
+                            <a href="{{ url_for('edit_city', city_id=city.id) }}" class="btn btn-sm btn-warning">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteCityModal{{ city.id }}">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                            
+                            <!-- Модальне вікно для підтвердження видалення -->
+                            <div class="modal fade" id="deleteCityModal{{ city.id }}" tabindex="-1" aria-labelledby="deleteCityModalLabel{{ city.id }}" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="deleteCityModalLabel{{ city.id }}">Підтвердження видалення</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Ви впевнені, що хочете видалити місто "{{ city.name }}"?
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Скасувати</button>
+                                            <form action="{{ url_for('delete_city', city_id=city.id) }}" method="post">
+                                                <button type="submit" class="btn btn-danger">Видалити</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

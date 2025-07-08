@@ -1,0 +1,154 @@
+<div class="row">
+    <div class="col-md-12 mb-4">
+        <div class="chart-container" style="position: relative; height:400px;">
+            <canvas id="activityChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Загальна статистика</h5>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <th>Період:</th>
+                            <td>{{ report_data.period_start }} - {{ report_data.period_end }}</td>
+                        </tr>
+                        <tr>
+                            <th>Загальна кількість сеансів:</th>
+                            <td>{{ report_data.total_sessions }}</td>
+                        </tr>
+                        <tr>
+                            <th>Унікальних користувачів:</th>
+                            <td>{{ report_data.unique_users }}</td>
+                        </tr>
+                        <tr>
+                            <th>Середня тривалість сеансу:</th>
+                            <td>{{ report_data.average_session_duration }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Активність за типом</h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-container" style="position: relative; height:250px;">
+                    <canvas id="activityTypeChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Найактивніші користувачі</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Користувач</th>
+                                <th>Кількість сеансів</th>
+                                <th>Пройдено тестів</th>
+                                <th>Правильних відповідей</th>
+                                <th>Загальний час (хв)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in report_data.top_users %}
+                            <tr>
+                                <td>{{ user.name }}</td>
+                                <td>{{ user.sessions }}</td>
+                                <td>{{ user.tests }}</td>
+                                <td>{{ user.correct_answers }} ({{ user.accuracy }}%)</td>
+                                <td>{{ user.total_time }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Графік активності за днями
+        var activityCtx = document.getElementById('activityChart').getContext('2d');
+        var activityChart = new Chart(activityCtx, {
+            type: 'line',
+            data: {
+                labels: {{ report_data.dates|tojson }},
+                datasets: [{
+                    label: 'Кількість сеансів',
+                    data: {{ report_data.sessions|tojson }},
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 2,
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+        
+        // Графік типів активності
+        var typeCtx = document.getElementById('activityTypeChart').getContext('2d');
+        var typeChart = new Chart(typeCtx, {
+            type: 'pie',
+            data: {
+                labels: ['Тести', 'Перегляд матеріалів', 'Зворотний зв\'язок'],
+                datasets: [{
+                    data: [
+                        {{ report_data.activity_types.tests }},
+                        {{ report_data.activity_types.materials }},
+                        {{ report_data.activity_types.feedback }}
+                    ],
+                    backgroundColor: [
+                        'rgba(75, 192, 192, 0.7)',
+                        'rgba(153, 102, 255, 0.7)',
+                        'rgba(255, 159, 64, 0.7)'
+                    ],
+                    borderColor: [
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                    }
+                }
+            }
+        });
+    });
+</script>

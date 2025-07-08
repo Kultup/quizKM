@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}Додати місто{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Додати місто</h1>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="post" action="{{ url_for('add_city') }}">
+            <div class="mb-3">
+                <label for="name" class="form-label">Назва міста</label>
+                <input type="text" class="form-control" id="name" name="name" required>
+            </div>
+            <div class="mb-3">
+                <label for="description" class="form-label">Опис</label>
+                <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+            </div>
+            <div class="d-flex justify-content-between">
+                <a href="{{ url_for('cities') }}" class="btn btn-secondary">Скасувати</a>
+                <button type="submit" class="btn btn-primary">Зберегти</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

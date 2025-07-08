@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block title %}Деталі користувача{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Деталі користувача</h3>
+                    <div class="card-tools">
+                        <a href="{{ url_for('users') }}" class="btn btn-secondary btn-sm">
+                            <i class="fas fa-arrow-left"></i> Назад до списку
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>Особиста інформація</h5>
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th width="30%">ID:</th>
+                                    <td>{{ user.id }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Telegram ID:</th>
+                                    <td>{{ user.telegram_id }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Ім'я:</th>
+                                    <td>{{ user.first_name }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Прізвище:</th>
+                                    <td>{{ user.last_name }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Місто:</th>
+                                    <td>{{ user.city }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Посада:</th>
+                                    <td>{{ user.position }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Дата реєстрації:</th>
+                                    <td>{{ user.registration_date.strftime('%d.%m.%Y %H:%M') if user.registration_date else 'Не вказано' }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Остання активність:</th>
+                                    <td>{{ user.last_activity.strftime('%d.%m.%Y %H:%M') if user.last_activity else 'Не вказано' }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Статус:</th>
+                                    <td>
+                                        {% if user.is_active %}
+                                            <span class="badge badge-success">Активний</span>
+                                        {% else %}
+                                            <span class="badge badge-danger">Неактивний</span>
+                                        {% endif %}
+                                        {% if user.is_admin %}
+                                            <span class="badge badge-warning">Адміністратор</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Статистика тестування</h5>
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th width="50%">Загальна кількість тестів:</th>
+                                    <td>{{ total_tests }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Завершених тестів:</th>
+                                    <td>{{ completed_tests }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Пропущених тестів:</th>
+                                    <td>{{ total_tests - completed_tests }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Загальний бал:</th>
+                                    <td>{{ user.total_score }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Точність відповідей:</th>
+                                    <td>
+                                        <div class="progress">
+                                            <div class="progress-bar 
+                                                {% if accuracy >= 80 %}bg-success
+                                                {% elif accuracy >= 60 %}bg-warning
+                                                {% else %}bg-danger{% endif %}"
+                                                role="progressbar" 
+                                                style="width: {{ accuracy }}%" 
+                                                aria-valuenow="{{ accuracy }}" 
+                                                aria-valuemin="0" 
+                                                aria-valuemax="100">
+                                                {{ "%.1f"|format(accuracy) }}%
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                            <div class="mt-3">
+                                <h6>Рівень успішності:</h6>
+                                {% if accuracy >= 90 %}
+                                    <span class="badge badge-success badge-lg">Відмінно</span>
+                                {% elif accuracy >= 80 %}
+                                    <span class="badge badge-info badge-lg">Добре</span>
+                                {% elif accuracy >= 60 %}
+                                    <span class="badge badge-warning badge-lg">Задовільно</span>
+                                {% else %}
+                                    <span class="badge badge-danger badge-lg">Потребує покращення</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

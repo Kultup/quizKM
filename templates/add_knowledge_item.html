@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}Додати запис до бази знань{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Додати запис до бази знань</h1>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="post" action="{{ url_for('add_knowledge_item') }}">
+            <div class="mb-3">
+                <label for="title" class="form-label">Заголовок</label>
+                <input type="text" class="form-control" id="title" name="title" required>
+            </div>
+            
+            <div class="mb-3">
+                <label for="category_id" class="form-label">Категорія</label>
+                <select class="form-select" id="category_id" name="category_id" required>
+                    <option value="" selected disabled>Виберіть категорію</option>
+                    {% for category in categories %}
+                    <option value="{{ category.id }}">{{ category.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="mb-3">
+                <label for="position_required" class="form-label">Посада</label>
+                <select class="form-select" id="position_required" name="position_required">
+                    <option value="" selected>Всі посади</option>
+                    <option value="Офіціант">Офіціант</option>
+                    <option value="Банкетний менеджер">Банкетний менеджер</option>
+                    <option value="Кухар">Кухар</option>
+                    <option value="Адміністратор">Адміністратор</option>
+                </select>
+                <div class="form-text">Якщо не вибрано, матеріал буде доступний для всіх посад.</div>
+            </div>
+            
+            <div class="mb-3">
+                <label for="content" class="form-label">Зміст</label>
+                <textarea class="form-control" id="content" name="content" rows="10" required></textarea>
+                <div class="form-text">Підтримується форматування Markdown.</div>
+            </div>
+            
+            <div class="mb-3">
+                <label for="tags" class="form-label">Теги</label>
+                <input type="text" class="form-control" id="tags" name="tags">
+                <div class="form-text">Розділяйте теги комами (наприклад: python, flask, sql).</div>
+            </div>
+            
+            <div class="d-flex justify-content-between">
+                <a href="{{ url_for('knowledge_base') }}" class="btn btn-secondary">Скасувати</a>
+                <button type="submit" class="btn btn-primary">Зберегти</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

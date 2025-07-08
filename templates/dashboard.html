@@ -1,0 +1,227 @@
+{% extends 'base.html' %}
+
+{% block title %}Панель керування{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Панель керування</h1>
+</div>
+
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Користувачі</h5>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-people fs-1 text-primary me-3"></i>
+                            <div>
+                                <h2 class="mb-0">{{ total_users }}</h2>
+                                <p class="text-muted mb-0">Всього</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-person-check fs-1 text-success me-3"></i>
+                            <div>
+                                <h2 class="mb-0">{{ active_users }}</h2>
+                                <p class="text-muted mb-0">Активних</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <a href="{{ url_for('users') }}" class="btn btn-sm btn-outline-primary">Переглянути всіх</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Тести</h5>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-file-earmark-text fs-1 text-primary me-3"></i>
+                            <div>
+                                <h2 class="mb-0">{{ total_tests }}</h2>
+                                <p class="text-muted mb-0">Всього</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-check-circle fs-1 text-success me-3"></i>
+                            <div>
+                                <h2 class="mb-0">{{ completed_tests }}</h2>
+                                <p class="text-muted mb-0">Завершених</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <a href="{{ url_for('reports') }}" class="btn btn-sm btn-outline-primary">Переглянути звіти</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Питання та категорії</h5>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-question-circle fs-1 text-primary me-3"></i>
+                            <div>
+                                <h2 class="mb-0">{{ total_questions }}</h2>
+                                <p class="text-muted mb-0">Питань</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-folder fs-1 text-warning me-3"></i>
+                            <div>
+                                <h2 class="mb-0">{{ total_categories }}</h2>
+                                <p class="text-muted mb-0">Категорій</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <a href="{{ url_for('questions') }}" class="btn btn-sm btn-outline-primary">Керувати питаннями</a>
+                    <a href="{{ url_for('categories') }}" class="btn btn-sm btn-outline-primary">Керувати категоріями</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">База знань</h5>
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-book fs-1 text-info me-3"></i>
+                    <div>
+                        <h2 class="mb-0">{{ total_kb_items }}</h2>
+                        <p class="text-muted mb-0">Матеріалів</p>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <a href="{{ url_for('knowledge_base') }}" class="btn btn-sm btn-outline-primary">Керувати базою знань</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Міста</h5>
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-building fs-1 text-success me-3"></i>
+                    <div>
+                        <h2 class="mb-0">{{ total_cities }}</h2>
+                        <p class="text-muted mb-0">Всього</p>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <a href="{{ url_for('cities') }}" class="btn btn-sm btn-outline-primary">Керувати містами</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Посади</h5>
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-briefcase fs-1 text-warning me-3"></i>
+                    <div>
+                        <h2 class="mb-0">{{ total_positions }}</h2>
+                        <p class="text-muted mb-0">Всього</p>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <a href="{{ url_for('positions') }}" class="btn btn-sm btn-outline-primary">Керувати посадами</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Зворотний зв'язок</h5>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-chat-left-text fs-1 text-primary me-3"></i>
+                            <div>
+                                <h2 class="mb-0">{{ total_feedback }}</h2>
+                                <p class="text-muted mb-0">Всього</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-envelope fs-1 text-danger me-3"></i>
+                            <div>
+                                <h2 class="mb-0">{{ unread_feedback }}</h2>
+                                <p class="text-muted mb-0">Непрочитаних</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <a href="{{ url_for('feedback') }}" class="btn btn-sm btn-outline-primary">Переглянути відгуки</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Швидкі дії</h5>
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="{{ url_for('add_question') }}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Додати питання
+                    </a>
+                    <a href="{{ url_for('add_category') }}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Додати категорію
+                    </a>
+                    <a href="{{ url_for('add_city') }}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Додати місто
+                    </a>
+                    <a href="{{ url_for('add_position') }}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Додати посаду
+                    </a>
+                    <a href="{{ url_for('add_knowledge_item') }}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Додати матеріал до бази знань
+                    </a>
+                    <a href="{{ url_for('export_users') }}" class="btn btn-success">
+                        <i class="bi bi-download"></i> Експорт користувачів
+                    </a>
+                    <a href="{{ url_for('export_results') }}" class="btn btn-success">
+                        <i class="bi bi-download"></i> Експорт результатів
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block title %}Додати посаду{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Додати посаду</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <a href="{{ url_for('positions') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Назад до списку
+        </a>
+    </div>
+</div>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Інформація про посаду</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Назва посади <span class="text-danger">*</span></label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="name" 
+                               name="name" 
+                               required 
+                               placeholder="Введіть назву посади"
+                               value="{{ request.form.name if request.form.name }}">
+                        <div class="form-text">Унікальна назва посади (наприклад: "Менеджер з продажу", "Розробник", "Аналітик")</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Опис посади</label>
+                        <textarea class="form-control" 
+                                  id="description" 
+                                  name="description" 
+                                  rows="4" 
+                                  placeholder="Введіть опис посади (необов'язково)">{{ request.form.description if request.form.description }}</textarea>
+                        <div class="form-text">Детальний опис обов'язків та вимог до посади</div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('positions') }}" class="btn btn-secondary">
+                            <i class="bi bi-x-circle"></i> Скасувати
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i> Додати посаду
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Автофокус на поле назви
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('name').focus();
+});
+</script>
+{% endblock %}

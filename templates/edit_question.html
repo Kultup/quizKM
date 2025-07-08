@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block title %}Редагувати питання{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Редагувати питання</h1>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="post" action="{{ url_for('edit_question', question_id=question.id) }}">
+            <div class="mb-3">
+                <label for="text" class="form-label">Текст питання</label>
+                <textarea class="form-control" id="text" name="text" rows="3" required>{{ question.text }}</textarea>
+            </div>
+            
+            <div class="mb-3">
+                <label for="category_id" class="form-label">Категорія</label>
+                <select class="form-select" id="category_id" name="category_id" required>
+                    {% for category in categories %}
+                    <option value="{{ category.id }}" {% if category.id == question.category_id %}selected{% endif %}>{{ category.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="mb-3">
+                <label for="position_required" class="form-label">Посада</label>
+                <select class="form-select" id="position_required" name="position_required">
+                    <option value="" {% if not question.position_required %}selected{% endif %}>Всі посади</option>
+                    <option value="Офіціант" {% if question.position_required == 'Офіціант' %}selected{% endif %}>Офіціант</option>
+                    <option value="Банкетний менеджер" {% if question.position_required == 'Банкетний менеджер' %}selected{% endif %}>Банкетний менеджер</option>
+                    <option value="Кухар" {% if question.position_required == 'Кухар' %}selected{% endif %}>Кухар</option>
+                    <option value="Адміністратор" {% if question.position_required == 'Адміністратор' %}selected{% endif %}>Адміністратор</option>
+                </select>
+                <div class="form-text">Якщо не вибрано, питання буде доступне для всіх посад.</div>
+            </div>
+            
+
+            
+            <h4 class="mt-4 mb-3">Варіанти відповідей</h4>
+            
+            {% for option in options %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="option_{{ loop.index }}" class="form-label">Варіант {{ loop.index }}</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="option_{{ loop.index }}" name="option_{{ loop.index }}" value="{{ option.text }}" maxlength="25" {% if loop.index <= 2 %}required{% endif %}>
+                            <input type="hidden" name="option_id_{{ loop.index }}" value="{{ option.id }}">
+                            <div class="input-group-text">
+                                <div class="form-check form-check-inline m-0">
+                                    <input class="form-check-input" type="checkbox" id="is_correct_{{ loop.index }}" name="is_correct_{{ loop.index }}" {% if option.is_correct %}checked{% endif %}>
+                                    <label class="form-check-label" for="is_correct_{{ loop.index }}">Правильна відповідь</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <label for="explanation_{{ loop.index }}" class="form-label">Пояснення (якщо відповідь неправильна)</label>
+                            <textarea class="form-control" id="explanation_{{ loop.index }}" name="explanation_{{ loop.index }}" rows="2" placeholder="Введіть пояснення, чому ця відповідь неправильна">{{ option.explanation or '' }}</textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            
+            {# Додаємо порожні варіанти, якщо їх менше 4 #}
+            {% for i in range(options|length + 1, 5) %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="option_{{ i }}" class="form-label">Варіант {{ i }}</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="option_{{ i }}" name="option_{{ i }}" maxlength="25" {% if i <= 2 %}required{% endif %}>
+                            <div class="input-group-text">
+                                <div class="form-check form-check-inline m-0">
+                                    <input class="form-check-input" type="checkbox" id="is_correct_{{ i }}" name="is_correct_{{ i }}">
+                                    <label class="form-check-label" for="is_correct_{{ i }}">Правильна відповідь</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <label for="explanation_{{ i }}" class="form-label">Пояснення (якщо відповідь неправильна)</label>
+                            <textarea class="form-control" id="explanation_{{ i }}" name="explanation_{{ i }}" rows="2" placeholder="Введіть пояснення, чому ця відповідь неправильна"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle"></i> Питання повинно мати щонайменше 2 варіанти відповіді та 1 правильну відповідь.<br>
+                <strong>Увага:</strong> Варіанти відповідей обмежені до 25 символів для комфортного відображення в боті.
+            </div>
+            
+            <div class="d-flex justify-content-between">
+                <a href="{{ url_for('questions') }}" class="btn btn-secondary">Скасувати</a>
+                <button type="submit" class="btn btn-primary">Зберегти</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

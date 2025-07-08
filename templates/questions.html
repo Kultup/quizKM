@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+
+{% block title %}Питання{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Питання</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group me-2">
+            <a href="{{ url_for('add_question') }}" class="btn btn-sm btn-primary">
+                <i class="bi bi-plus-circle"></i> Додати питання
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header">
+        <form method="get" action="{{ url_for('questions') }}" class="row g-3">
+            <div class="col-md-3">
+                <label for="category" class="form-label">Категорія</label>
+                <select class="form-select" id="category" name="category_id">
+                    <option value="">Всі категорії</option>
+                    {% for category in all_categories %}
+                    <option value="{{ category.id }}" {% if request.args.get('category_id')|int == category.id %}selected{% endif %}>{{ category.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="position" class="form-label">Посада</label>
+                <select class="form-select" id="position" name="position_required">
+                    <option value="">Всі посади</option>
+                    <option value="Офіціант" {% if request.args.get('position_required') == 'Офіціант' %}selected{% endif %}>Офіціант</option>
+                    <option value="Банкетний менеджер" {% if request.args.get('position_required') == 'Банкетний менеджер' %}selected{% endif %}>Банкетний менеджер</option>
+                    <option value="Кухар" {% if request.args.get('position_required') == 'Кухар' %}selected{% endif %}>Кухар</option>
+                    <option value="Адміністратор" {% if request.args.get('position_required') == 'Адміністратор' %}selected{% endif %}>Адміністратор</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="search" class="form-label">Пошук</label>
+                <input type="text" class="form-control" id="search" name="search" value="{{ request.args.get('search', '') }}" placeholder="Введіть текст для пошуку">
+            </div>
+            <div class="col-md-3 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary me-2">Фільтрувати</button>
+                <a href="{{ url_for('questions') }}" class="btn btn-secondary">Скинути</a>
+            </div>
+        </form>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Питання</th>
+                        <th>Категорія</th>
+                        <th>Посада</th>
+                        <th>Складність</th>
+                        <th>Дії</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for question in questions %}
+                    <tr>
+                        <td>{{ question.id }}</td>
+                        <td>{{ question.text }}</td>
+                        <td>{{ question.category.name }}</td>
+                        <td>
+                            {% if question.position_required %}
+                            <span class="badge bg-info">{{ question.position_required }}</span>
+                            {% else %}
+                            <span class="badge bg-secondary">Всі посади</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if question.difficulty == 'easy' %}
+                            <span class="badge bg-success">Легке</span>
+                            {% elif question.difficulty == 'medium' %}
+                            <span class="badge bg-warning">Середнє</span>
+                            {% elif question.difficulty == 'hard' %}
+                            <span class="badge bg-danger">Складне</span>
+                            {% else %}
+                            <span class="badge bg-secondary">Невідомо</span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            <a href="{{ url_for('edit_question', question_id=question.id) }}" class="btn btn-sm btn-warning">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteQuestionModal{{ question.id }}">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                            
+                            <!-- Модальне вікно для підтвердження видалення -->
+                            <div class="modal fade" id="deleteQuestionModal{{ question.id }}" tabindex="-1" aria-labelledby="deleteQuestionModalLabel{{ question.id }}" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="deleteQuestionModalLabel{{ question.id }}">Підтвердження видалення</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Ви впевнені, що хочете видалити питання "{{ question.text }}"?
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Скасувати</button>
+                                            <form action="{{ url_for('delete_question', question_id=question.id) }}" method="post">
+                                                <button type="submit" class="btn btn-danger">Видалити</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

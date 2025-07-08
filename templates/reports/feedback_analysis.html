@@ -1,0 +1,184 @@
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Загальна статистика</h5>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <th>Період:</th>
+                            <td>{{ report_data.period_start }} - {{ report_data.period_end }}</td>
+                        </tr>
+                        <tr>
+                            <th>Загальна кількість відгуків:</th>
+                            <td>{{ report_data.total_feedback }}</td>
+                        </tr>
+                        <tr>
+                            <th>Прочитані відгуки:</th>
+                            <td>{{ report_data.read_feedback }} ({{ report_data.read_percentage }}%)</td>
+                        </tr>
+                        <tr>
+                            <th>Непрочитані відгуки:</th>
+                            <td>{{ report_data.unread_feedback }} ({{ report_data.unread_percentage }}%)</td>
+                        </tr>
+                        <tr>
+                            <th>Унікальних користувачів:</th>
+                            <td>{{ report_data.unique_users }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Розподіл за темами</h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-container" style="position: relative; height:250px;">
+                    <canvas id="topicsChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Динаміка зворотного зв'язку</h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-container" style="position: relative; height:300px;">
+                    <canvas id="feedbackTimelineChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Ключові слова та фрази</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex flex-wrap">
+                    {% for keyword in report_data.keywords %}
+                    <div class="p-2 m-1 bg-light rounded" style="font-size: {{ 14 + keyword.weight }}px;">
+                        {{ keyword.text }} ({{ keyword.count }})
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Останні відгуки</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Дата</th>
+                                <th>Користувач</th>
+                                <th>Тема</th>
+                                <th>Повідомлення</th>
+                                <th>Статус</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for feedback in report_data.recent_feedback %}
+                            <tr>
+                                <td>{{ feedback.date }}</td>
+                                <td>{{ feedback.user }}</td>
+                                <td>{{ feedback.feedback_type }}</td>
+                                <td>{{ feedback.text }}</td>
+                                <td>
+                                    {% if feedback.is_read %}
+                                        <span class="badge bg-success">Прочитано</span>
+                                    {% else %}
+                                        <span class="badge bg-warning">Непрочитано</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Графік розподілу за темами
+        var topicsCtx = document.getElementById('topicsChart').getContext('2d');
+        var topicsChart = new Chart(topicsCtx, {
+            type: 'pie',
+            data: {
+                labels: {{ report_data.topics.labels|tojson }},
+                datasets: [{
+                    data: {{ report_data.topics.data|tojson }},
+                    backgroundColor: [
+                        'rgba(75, 192, 192, 0.7)',
+                        'rgba(153, 102, 255, 0.7)',
+                        'rgba(255, 159, 64, 0.7)',
+                        'rgba(255, 99, 132, 0.7)',
+                        'rgba(54, 162, 235, 0.7)',
+                        'rgba(255, 206, 86, 0.7)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                    }
+                }
+            }
+        });
+        
+        // Графік динаміки зворотного зв'язку
+        var timelineCtx = document.getElementById('feedbackTimelineChart').getContext('2d');
+        var timelineChart = new Chart(timelineCtx, {
+            type: 'line',
+            data: {
+                labels: {{ report_data.timeline.labels|tojson }},
+                datasets: [{
+                    label: 'Кількість відгуків',
+                    data: {{ report_data.timeline.data|tojson }},
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 2,
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    });
+</script>

@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+
+{% block title %}Звіти{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Звіти</h1>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Активність користувачів</h5>
+            </div>
+            <div class="card-body">
+                <form method="get" action="{{ url_for('user_activity_report') }}" class="mb-3">
+                    <div class="row g-3">
+                        <div class="col-md-5">
+                            <label for="start_date" class="form-label">Початкова дата</label>
+                            <input type="date" class="form-control" id="start_date" name="start_date" value="{{ request.args.get('start_date', '') }}" required>
+                        </div>
+                        <div class="col-md-5">
+                            <label for="end_date" class="form-label">Кінцева дата</label>
+                            <input type="date" class="form-control" id="end_date" name="end_date" value="{{ request.args.get('end_date', '') }}" required>
+                        </div>
+                        <div class="col-md-2 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary w-100">Створити</button>
+                        </div>
+                    </div>
+                </form>
+                <p>Цей звіт показує активність користувачів за вибраний період, включаючи кількість сеансів, пройдених тестів та відправлених повідомлень зворотного зв'язку.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Статистика тестування</h5>
+            </div>
+            <div class="card-body">
+                <form method="get" action="{{ url_for('test_statistics_report') }}" class="mb-3">
+                    <div class="row g-3">
+                        <div class="col-md-5">
+                            <label for="category" class="form-label">Категорія</label>
+                            <select class="form-select" id="category" name="category_id">
+                                <option value="">Всі категорії</option>
+                                {% for category in all_categories %}
+                                <option value="{{ category.id }}" {% if request.args.get('category_id')|int == category.id %}selected{% endif %}>{{ category.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-5">
+                            <label for="period" class="form-label">Період</label>
+                            <select class="form-select" id="period" name="period">
+                                <option value="week" {% if request.args.get('period') == 'week' %}selected{% endif %}>Тиждень</option>
+                                <option value="month" {% if request.args.get('period') == 'month' %}selected{% endif %}>Місяць</option>
+                                <option value="quarter" {% if request.args.get('period') == 'quarter' %}selected{% endif %}>Квартал</option>
+                                <option value="year" {% if request.args.get('period') == 'year' %}selected{% endif %}>Рік</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary w-100">Створити</button>
+                        </div>
+                    </div>
+                </form>
+                <p>Цей звіт показує статистику проходження тестів за вибраний період, включаючи середній бал, кількість правильних відповідей та розподіл за складністю питань.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Популярні питання</h5>
+            </div>
+            <div class="card-body">
+                <form method="get" action="{{ url_for('popular_questions_report') }}" class="mb-3">
+                    <div class="row g-3">
+                        <div class="col-md-5">
+                            <label for="limit" class="form-label">Кількість питань</label>
+                            <select class="form-select" id="limit" name="limit">
+                                <option value="10" {% if request.args.get('limit')|int == 10 %}selected{% endif %}>10</option>
+                                <option value="20" {% if request.args.get('limit')|int == 20 %}selected{% endif %}>20</option>
+                                <option value="50" {% if request.args.get('limit')|int == 50 %}selected{% endif %}>50</option>
+                                <option value="100" {% if request.args.get('limit')|int == 100 %}selected{% endif %}>100</option>
+                            </select>
+                        </div>
+                        <div class="col-md-5">
+                            <label for="sort" class="form-label">Сортування</label>
+                            <select class="form-select" id="sort" name="sort">
+                                <option value="views" {% if request.args.get('sort') == 'views' %}selected{% endif %}>За переглядами</option>
+                                <option value="correct" {% if request.args.get('sort') == 'correct' %}selected{% endif %}>За правильними відповідями</option>
+                                <option value="incorrect" {% if request.args.get('sort') == 'incorrect' %}selected{% endif %}>За неправильними відповідями</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary w-100">Створити</button>
+                        </div>
+                    </div>
+                </form>
+                <p>Цей звіт показує найпопулярніші питання за кількістю переглядів або відповідей, допомагаючи визначити, які теми найбільш цікаві для користувачів.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Аналіз зворотного зв'язку</h5>
+            </div>
+            <div class="card-body">
+                <form method="get" action="{{ url_for('feedback_analysis_report') }}" class="mb-3">
+                    <div class="row g-3">
+                        <div class="col-md-10">
+                            <label for="period" class="form-label">Період</label>
+                            <select class="form-select" id="period" name="period">
+                                <option value="week" {% if request.args.get('period') == 'week' %}selected{% endif %}>Тиждень</option>
+                                <option value="month" {% if request.args.get('period') == 'month' %}selected{% endif %}>Місяць</option>
+                                <option value="quarter" {% if request.args.get('period') == 'quarter' %}selected{% endif %}>Квартал</option>
+                                <option value="year" {% if request.args.get('period') == 'year' %}selected{% endif %}>Рік</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary w-100">Створити</button>
+                        </div>
+                    </div>
+                </form>
+                <p>Цей звіт аналізує зворотний зв'язок від користувачів за вибраний період, виділяючи основні теми та проблеми, які згадуються найчастіше.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if report_data %}
+<div class="card mt-4">
+    <div class="card-header">
+        <h5 class="card-title mb-0">{{ report_title }}</h5>
+    </div>
+    <div class="card-body">
+        {% if report_type == 'user_activity' %}
+            {% include 'reports/user_activity.html' %}
+        {% elif report_type == 'test_statistics' %}
+            {% include 'reports/test_statistics.html' %}
+        {% elif report_type == 'popular_questions' %}
+            {% include 'reports/popular_questions.html' %}
+        {% elif report_type == 'feedback_analysis' %}
+            {% include 'reports/feedback_analysis.html' %}
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}
