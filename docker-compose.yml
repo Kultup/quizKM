@@ -10,7 +10,7 @@ services:
     env_file:
       - .env
     ports:
-      - "5000:5000"
+      - "8000:5000"
     command: python bot.py
 
   admin:
@@ -23,7 +23,7 @@ services:
       - .env
     ports:
       - "5001:5000"
-    command: python admin.py
+    command: gunicorn --workers 3 --bind 0.0.0.0:5000 admin:app
     depends_on:
       - bot
 
