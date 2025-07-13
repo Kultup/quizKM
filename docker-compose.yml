@@ -10,7 +10,7 @@ services:
     env_file:
       - .env
     ports:
-      - "8000:5000"
+      - "8001:5000"
     command: python bot.py
 
   admin:
